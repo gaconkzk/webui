@@ -1,6 +1,7 @@
 {
   "name": "theflies",
   "dependencies": {
+    "app-elements": "PolymerElements/app-elements#^0.10.1",
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
     "iron-elements": "PolymerElements/iron-elements#^1.0.8",
     "moment": "^2.11.2"
