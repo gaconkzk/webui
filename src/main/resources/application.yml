@@ -1,3 +1,8 @@
 
 
 security.user.password: password
+
+logging.level:
+  root: WARN
+  org.springframework.security: DEBUG
+  com.tma: DEBUG
