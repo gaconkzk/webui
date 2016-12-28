@@ -3,6 +3,7 @@
     "node" : "6.x.x"
   },
   "name": "theflies",
+  "repository": "https://github.com/gaconkzk/webui.git",
   "version": "0.1.0",
   "description": "",
   "license": "MIT",
