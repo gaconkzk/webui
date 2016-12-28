@@ -107,16 +107,9 @@
              },
 
              listeners: {
-                "iron-form-presubmit": "_preSubmitLoginForm",
-                "iron-form-response": "_loginSuccess",
-                "iron-form-error": "_loginError"
              },
              _computeCredential: function(username, password) {
                 return username && password ? { "username" : username, "password": password } : null;
-             },
-             _preSubmitLoginForm: function() {
-                var form = this.$.form;
-                form.request.headers.authorization = "Basic " + btoa(credential.username + ":" + credential.password);
              },
              _loginSuccess: function(evt) {
                 var response = evt.detail.response;
@@ -124,7 +117,9 @@
                 this.username = response.name;
              },
              _loginError: function(evt) {
-                alert(evt.detail);
+                this.authenticated = false;
+                this.username = "";
+                this.password = "";
              },
              getData: function() {
                 this.$.dataService.generateRequest();
@@ -139,7 +134,8 @@
                 this.$.loginDlg.open();
              },
              doLogout: function() {
-                this.$.logout.generateRequest();
+                this.$.login.headers = {"authorization": "Basic " + btoa(":")};
+                this.$.login.generateRequest();
              },
              submitForm: function() {
                 this.$.login.headers = this.credential? {"authorization": "Basic " + btoa(this.credential.username + ":" + this.credential.password)} : {};
