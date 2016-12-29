@@ -27,9 +27,9 @@
     <app-toolbar>
       <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
       <div main-title>The Flies</div>
-      <paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="[[authenticated]]">Login
+      <paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="{{authenticated}}">Login
       </paper-button>
-      <paper-button id="logoutBtn" on-tap="doLogout" hidden$="[[!authenticated]]">Logout
+      <paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
       </paper-button>
     </app-toolbar>
 
@@ -43,7 +43,7 @@
       </div>
     </div>
 
-    <login-dialog id="login"></login-dialog>
+    <login-dialog id="login" on-authenticated="updateAuthen"></login-dialog>
   </template>
   <script>
         Polymer({
@@ -58,11 +58,15 @@
                 },
                 authenticated: {
                     type: Boolean,
+                    value: false,
                     notify: true
                 }
              },
              ready: function() {
                 this.$.logout.generateRequest();
+             },
+             updateAuthen: function(evt) {
+                this.authenticated = evt.detail.authenticated;
              },
              _loggedIn: function() {
                 this.authenticated = true;
@@ -87,7 +91,7 @@
                 this.$.logout.generateRequest();
              },
              showLoginDialog: function() {
-                this.$.login.open();
+                this.$.login.fire('show');
              },
              _logoutSuccess: function() {
                 this.authenticated = false;

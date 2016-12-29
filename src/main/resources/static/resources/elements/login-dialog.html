@@ -8,7 +8,7 @@
     <iron-ajax id="xhr" url="/user" headers='{"X-Requested-With": "XMLHttpRequest"}' on-response="loggedIn" on-error="notLoggedIn"></iron-ajax>
     <paper-dialog id="loginDlg">
       <h2>Login</h2>
-      <iron-label id="error" hidden$="[[authenticated]]"></iron-label>
+      <iron-label id="error" hidden="true"></iron-label>
       <form is="iron-form">
         <paper-input label="Username" id="username" type="text" value="{{username}}" required></paper-input>
         <paper-input label="Password" id="password" type="password" value="{{password}}" required></paper-input>
@@ -27,15 +27,15 @@
           computed: '_updateCredential(username,password)',
           notify: true
         },
-        athenticated: {
-          type: Boolean,
-          notify: true
-        },
         username: String,
         password: String
       },
 
-      open: function() {
+      listeners: {
+        'show': 'showDialog'
+      },
+
+      showDialog: function() {
         this.$.loginDlg.open();
       },
 
@@ -57,12 +57,14 @@
       },
 
       loggedIn: function(evt) {
-        this.authenticated = true;
+        this.fire("authenticated", {authenticated: true});
         this.$.loginDlg.close();
       },
+
       notLoggedIn: function() {
-        this.authenticated = false;
+        this.fire("authenticated", {authenticated: false});
         this.$.error.innerHTML = "Can't login! Check your username or password."
+        this.$.error.hidden = false;
       }
     });
   </script>
