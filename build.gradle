@@ -1,23 +1,23 @@
 buildscript {
-	ext {
-		springBootVersion = '2.0.0.BUILD-SNAPSHOT'
-	}
-	repositories {
-		mavenCentral()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.0.0.BUILD-SNAPSHOT'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 plugins {
-	id 'com.moowork.node' version '1.0.1'
+    id 'com.moowork.node' version '1.0.1'
 }
 
 plugins {
-	id 'com.moowork.gulp' version '1.0.1'
+    id 'com.moowork.gulp' version '1.0.1'
 }
 
 apply plugin: 'java'
@@ -25,16 +25,16 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 
 jar {
-	baseName = 'theflies'
-	version = '0.0.1-SNAPSHOT'
+    baseName = 'theflies'
+    version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
 }
 
 node {
@@ -50,31 +50,33 @@ gulp {
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile("org.springframework.boot:spring-boot-starter-data-redis")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.session:spring-session")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
 task npmCacheConfig(type: NpmTask) {
     description = "Configure NPM Cache"
     def npmCacheDir = "${gradle.getGradleUserHomeDir()}/.caches/npm"
     outputs.files file(npmCacheDir)
-    args = [ 'config', 'set', 'cache', npmCacheDir ]
+    args = ['config', 'set', 'cache', npmCacheDir]
 }
 
 task npmPackages(type: NpmTask, dependsOn: npmCacheConfig) {
     description = "Install Nodejs packages"
-    args = [ 'install' ]
+    args = ['install']
     inputs.files file('package.json')
     outputs.files file('node_modules')
 }
 
 task bowerInstall(type: NodeTask, dependsOn: npmPackages) {
     script = file('node_modules/bower/bin/bower')
-    args = [ "--config.storage.cache=${gradle.getGradleUserHomeDir()}/.caches/bower/cache",
-             "--config.storage.packages=${gradle.getGradleUserHomeDir()}/.caches/bower/packages",
-             "--config.storage.registry=${gradle.getGradleUserHomeDir()}/.caches/bower/registry",
-            'install' ]
+    args = ["--config.storage.cache=${gradle.getGradleUserHomeDir()}/.caches/bower/cache",
+            "--config.storage.packages=${gradle.getGradleUserHomeDir()}/.caches/bower/packages",
+            "--config.storage.registry=${gradle.getGradleUserHomeDir()}/.caches/bower/registry",
+            'install']
     inputs.files file('bower.json')
     outputs.files file('src/main/resources/static/resources/bower_components')
 }

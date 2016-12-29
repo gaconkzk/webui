@@ -1,0 +1,69 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="login-dialog">
+  <template>
+    <iron-ajax id="xhr" url="/user" headers='{"X-Requested-With": "XMLHttpRequest"}' on-response="loggedIn" on-error="notLoggedIn"></iron-ajax>
+    <paper-dialog id="loginDlg">
+      <h2>Login</h2>
+      <iron-label id="error" hidden$="[[authenticated]]"></iron-label>
+      <form is="iron-form">
+        <paper-input label="Username" id="username" type="text" value="{{username}}" required></paper-input>
+        <paper-input label="Password" id="password" type="password" value="{{password}}" required></paper-input>
+
+        <paper-button raised on-tap="submitForm">Login</paper-button>
+      </form>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: "login-dialog",
+
+      properties: {
+        credentials: {
+          type: Object,
+          computed: '_updateCredential(username,password)',
+          notify: true
+        },
+        athenticated: {
+          type: Boolean,
+          notify: true
+        },
+        username: String,
+        password: String
+      },
+
+      open: function() {
+        this.$.loginDlg.open();
+      },
+
+      _updateCredential: function(username,password) {
+        return { "username": username, "password": password };
+      },
+
+      submitForm: function() {
+        if (this.credentials) {
+          this.$.xhr.headers["Authorization"] = "Basic " + btoa(this.credentials.username + ":" + this.credentials.password);
+        }
+        // try getting current logged in user
+        this.$.xhr.generateRequest();
+      },
+
+      doLogout: function() {
+        this.$.xhr.headers["Authorization"] = "Basic " + btoa(":");
+        this.$.xhr.generateRequest();
+      },
+
+      loggedIn: function(evt) {
+        this.authenticated = true;
+        this.$.loginDlg.close();
+      },
+      notLoggedIn: function() {
+        this.authenticated = false;
+        this.$.error.innerHTML = "Can't login! Check your username or password."
+      }
+    });
+  </script>
+</dom-module>

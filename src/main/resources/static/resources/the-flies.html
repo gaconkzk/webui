@@ -1,30 +1,51 @@
 <link rel="import" href="./bower_components/polymer/polymer.html">
+<link rel="import" href="./bower_components/app-layout/app-layout.html">
 <link rel="import" href="./bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="./bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="elements/login-dialog.html">
+
 <dom-module id="the-flies">
-    <style>
+  <style>
         div.bubble {
             margin: 20px;
             padding: 20px 20px;
             border-radius: 20px;
             background-color: #f1f1f1;
         }
-    </style>
 
-    <template>
-        <iron-ajax id="dataService" url="http://localhost:9000/" on-response="updateData"></iron-ajax>
-        <div class="bubble">
-            <h1>Greeting</h1>
-            <div>
-                <p>The ID is [[greeting.id]]</p>
-                <p>The content is [[greeting.content]]</p>
 
-                <paper-button on-click="getData">Get Server Data</paper-button>
-            </div>
-        </div>
-    </template>
-    <script>
+
+  </style>
+
+  <template>
+    <iron-ajax id="token" url="/token" on-response="_tokenSuccess"></iron-ajax>
+    <iron-ajax id="logout" url="/user" headers='{"X-Requested-With": "XMLHttpRequest"}' on-error="_logoutSuccess" on-success="_loggedIn"></iron-ajax>
+    <iron-ajax id="dataService" url="http://localhost:9000/" on-response="updateData"
+               on-error="errorHandle"></iron-ajax>
+
+    <app-toolbar>
+      <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
+      <div main-title>The Flies</div>
+      <paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="[[authenticated]]">Login
+      </paper-button>
+      <paper-button id="logoutBtn" on-tap="doLogout" hidden$="[[!authenticated]]">Logout
+      </paper-button>
+    </app-toolbar>
+
+    <div class="bubble">
+      <h1>Greeting</h1>
+      <div>
+        <p>The ID is [[greeting.id]]</p>
+        <p>The content is [[greeting.content]]</p>
+
+        <paper-button on-click="getData">Get Server Data</paper-button>
+      </div>
+    </div>
+
+    <login-dialog id="login"></login-dialog>
+  </template>
+  <script>
         Polymer({
              is: "the-flies",
              properties: {
@@ -34,15 +55,46 @@
                         "id": "ahihi",
                         "content": "welcome to my first training session"
                     }
+                },
+                authenticated: {
+                    type: Boolean,
+                    notify: true
                 }
              },
-
+             ready: function() {
+                this.$.logout.generateRequest();
+             },
+             _loggedIn: function() {
+                this.authenticated = true;
+             },
+             // TODO in future I'll got into trouble if keeping doing like this
              getData: function() {
+                this.$.token.generateRequest();
+             },
+             _tokenSuccess: function(evt) {
+                this.$.dataService.method = 'GET';
+                this.$.dataService.headers = {"X-Requested-With": "XMLHttpRequest", "X-Auth-Token": evt.detail.response.token }
                 this.$.dataService.generateRequest();
+             },
+             errorHandle: function(evt) {
+                this.greeting = {};
              },
              updateData: function(evt) {
                 this.greeting = evt.detail.response;
+             },
+             doLogout: function() {
+                this.$.logout.headers["Authorization"] = "Basic "+btoa(":");
+                this.$.logout.generateRequest();
+             },
+             showLoginDialog: function() {
+                this.$.login.open();
+             },
+             _logoutSuccess: function() {
+                this.authenticated = false;
              }
         });
-    </script>
+
+
+
+  </script>
 </dom-module>
