@@ -20,6 +20,10 @@ zuul:
     user:
       path: /user/**
       url: http://localhost:9999/uaa/user
+    auth-server:
+      path: /uaa/**
+      stripPrefix: false
+      sensitiveHeaders:
 
 logging.level:
   org.springframework.security: DEBUG
