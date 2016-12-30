@@ -14,8 +14,10 @@
 
 <dom-module id="the-flies">
   <template>
-    <iron-ajax id="token" url="/token" on-response="_tokenSuccess"></iron-ajax>
-    <iron-ajax id="dataService" url="http://localhost:9000/" on-response="updateData"
+    <iron-ajax id="dataService"
+               method="GET"
+               url="http://localhost:9000/"
+               on-response="updateData"
                on-error="errorHandle"></iron-ajax>
 
     <app-location route="{{route}}"></app-location>
@@ -78,11 +80,6 @@
       },
       // TODO in future I'll got into trouble if keeping doing like this
       getData: function() {
-        this.$.token.generateRequest();
-      },
-      _tokenSuccess: function(evt) {
-        this.$.dataService.method = 'GET';
-        this.$.dataService.headers = {"X-Requested-With": "XMLHttpRequest", "X-Auth-Token": evt.detail.response.token }
         this.$.dataService.generateRequest();
       },
       errorHandle: function(evt) {
