@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '2.0.0.BUILD-SNAPSHOT'
+        springCloudVersion = 'Dalston.BUILD-SNAPSHOT'
     }
     repositories {
         mavenCentral()
@@ -49,9 +50,18 @@ gulp {
     bufferOutput = false
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-web")
+
+    compile("org.springframework.cloud:spring-cloud-starter-zuul")
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 

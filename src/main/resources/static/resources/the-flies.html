@@ -16,7 +16,8 @@
   <template>
     <iron-ajax id="dataService"
                method="GET"
-               url="http://localhost:9000/"
+               headers='{"X-Requested-With": "XMLHttpRequest"}'
+               url="/resource"
                on-response="updateData"
                on-error="errorHandle"></iron-ajax>
 
