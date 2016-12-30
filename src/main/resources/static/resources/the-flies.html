@@ -74,11 +74,7 @@
       },
       updateAuthen: function(evt) {
         this.authenticated = evt.detail.authenticated;
-        this.$.toast.show({text: "You are "+(this.authenticated?"logged in":"logged out")+", the btn should be update correctly.", duration: 3000});
-      },
-      _loggedIn: function() {
-        this.authenticated = true;
-        this.$.toast.show({text: "You are logged in, the btn should be update correctly.", duration: 3000});
+        this.$.toast.show(evt.detail.message);
       },
       // TODO in future I'll got into trouble if keeping doing like this
       getData: function() {
@@ -100,10 +96,6 @@
       },
       showLoginDialog: function() {
         this.$.login.fire('show');
-      },
-      _logoutSuccess: function() {
-        this.authenticated = false;
-        this.$.toast.show({text: "You are logged out, the btn should be update correctly.", duration: 3000});
       }
     });
 

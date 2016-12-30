@@ -57,17 +57,21 @@
       },
 
       doLogout: function() {
+        // clear old value;
+        this.username = "";
+        this.password = "";
+        // send fake request for logout
         this.$.xhr.headers["Authorization"] = "Basic " + btoa("x:y");
         this.$.xhr.generateRequest();
       },
 
       loggedIn: function(evt) {
-        this.fire("authenticated", {authenticated: true});
+        this.fire("authenticated", {authenticated: true, message: {text: "You are LoggedIn.", duration: 3000}});
         this.$.loginDlg.close();
       },
 
       notLoggedIn: function(alarm) {
-        this.fire("authenticated", {authenticated: false});
+        this.fire("authenticated", {authenticated: false, message: {text: "You are LoggedOut.", duration: 3000}});
       }
     });
   </script>
