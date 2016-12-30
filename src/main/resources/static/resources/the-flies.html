@@ -32,8 +32,9 @@
       <paper-toolbar>
         <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
         <span class="title">The Flies</span>
-        <paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="{{authenticated}}">Login
-        </paper-button>
+        <a is="paper-button" href="/login" hidden$="{{authenticated}}">Login</a>
+        <!--<paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="{{authenticated}}">Login
+        </paper-button>-->
         <paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
         </paper-button>
       </paper-toolbar>
