@@ -9,6 +9,7 @@ zuul:
     resource:
       path: /resource/**
       url: http://localhost:9000
+      sensitive-headers:
 
 logging.level:
   org.springframework.security: DEBUG
