@@ -1,104 +1,111 @@
 <link rel="import" href="./bower_components/polymer/polymer.html">
 <link rel="import" href="./bower_components/app-layout/app-layout.html">
 <link rel="import" href="./bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="./bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="./bower_components/paper-button/paper-button.html">
+<link rel="import" href="./bower_components/paper-toast/paper-toast.html">
 
-<link rel="import" href="elements/login-dialog.html">
+<link rel="import" href="./bower_components/app-route/app-location.html">
+<link rel="import" href="./bower_components/app-route/app-route.html">
+<link rel="import" href="./bower_components/app-layout/app-scroll-effects/effects/waterfall.html">
+
+<link rel="import" href="./elements/login-dialog.html">
 
 <dom-module id="the-flies">
-  <style>
-        div.bubble {
-            margin: 20px;
-            padding: 20px 20px;
-            border-radius: 20px;
-            background-color: #f1f1f1;
-        }
-
-
-
-  </style>
-
   <template>
     <iron-ajax id="token" url="/token" on-response="_tokenSuccess"></iron-ajax>
-    <iron-ajax id="logout" url="/user" headers='{"X-Requested-With": "XMLHttpRequest"}' on-error="_logoutSuccess" on-success="_loggedIn"></iron-ajax>
     <iron-ajax id="dataService" url="http://localhost:9000/" on-response="updateData"
                on-error="errorHandle"></iron-ajax>
 
-    <app-toolbar>
-      <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
-      <div main-title>The Flies</div>
-      <paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="{{authenticated}}">Login
-      </paper-button>
-      <paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
-      </paper-button>
-    </app-toolbar>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
 
-    <div class="bubble">
-      <h1>Greeting</h1>
-      <div>
-        <p>The ID is [[greeting.id]]</p>
-        <p>The content is [[greeting.content]]</p>
+    <paper-header-panel role="navigation" id="header" mode="waterfall" condenses reveals>
+      <paper-toolbar>
+        <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
+        <span class="title">The Flies</span>
+        <paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="{{authenticated}}">Login
+        </paper-button>
+        <paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
+        </paper-button>
+      </paper-toolbar>
 
-        <paper-button on-click="getData">Get Server Data</paper-button>
+      <div class="content fit">
+        <h1>Greeting</h1>
+        <div>
+          <p>The ID is [[greeting.id]]</p>
+          <p>The content is [[greeting.content]]</p>
+
+          <paper-button on-click="getData">Get Server Data</paper-button>
+        </div>
       </div>
-    </div>
+
+    </paper-header-panel>
 
     <login-dialog id="login" on-authenticated="updateAuthen"></login-dialog>
+
+    <paper-toast id="toast"></paper-toast>
   </template>
   <script>
-        Polymer({
-             is: "the-flies",
-             properties: {
-                greeting: {
-                    type: Object,
-                    value: {
-                        "id": "ahihi",
-                        "content": "welcome to my first training session"
-                    }
-                },
-                authenticated: {
-                    type: Boolean,
-                    value: false,
-                    notify: true
-                }
-             },
-             ready: function() {
-                this.$.logout.generateRequest();
-             },
-             updateAuthen: function(evt) {
-                this.authenticated = evt.detail.authenticated;
-             },
-             _loggedIn: function() {
-                this.authenticated = true;
-             },
-             // TODO in future I'll got into trouble if keeping doing like this
-             getData: function() {
-                this.$.token.generateRequest();
-             },
-             _tokenSuccess: function(evt) {
-                this.$.dataService.method = 'GET';
-                this.$.dataService.headers = {"X-Requested-With": "XMLHttpRequest", "X-Auth-Token": evt.detail.response.token }
-                this.$.dataService.generateRequest();
-             },
-             errorHandle: function(evt) {
-                this.greeting = {};
-             },
-             updateData: function(evt) {
-                this.greeting = evt.detail.response;
-             },
-             doLogout: function() {
-                this.$.logout.headers["Authorization"] = "Basic "+btoa(":");
-                this.$.logout.generateRequest();
-             },
-             showLoginDialog: function() {
-                this.$.login.fire('show');
-             },
-             _logoutSuccess: function() {
-                this.authenticated = false;
-             }
-        });
-
-
+    Polymer({
+      is: "the-flies",
+      properties: {
+        page: {
+          type: String,
+          reflectToAttribute: true,
+          observer: '_pageChanged'
+        },
+        greeting: {
+          type: Object,
+          value: {
+            "id": "ahihi",
+            "content": "welcome to my first training session"
+          }
+        },
+        authenticated: {
+          type: Boolean,
+          notify: true
+        }
+      },
+      updateAuthen: function(evt) {
+        this.authenticated = evt.detail.authenticated;
+        this.$.toast.show({text: "You are "+(this.authenticated?"logged in":"logged out")+", the btn should be update correctly.", duration: 3000});
+      },
+      _loggedIn: function() {
+        this.authenticated = true;
+        this.$.toast.show({text: "You are logged in, the btn should be update correctly.", duration: 3000});
+      },
+      // TODO in future I'll got into trouble if keeping doing like this
+      getData: function() {
+        this.$.token.generateRequest();
+      },
+      _tokenSuccess: function(evt) {
+        this.$.dataService.method = 'GET';
+        this.$.dataService.headers = {"X-Requested-With": "XMLHttpRequest", "X-Auth-Token": evt.detail.response.token }
+        this.$.dataService.generateRequest();
+      },
+      errorHandle: function(evt) {
+        this.greeting = {};
+      },
+      updateData: function(evt) {
+        this.greeting = evt.detail.response;
+      },
+      doLogout: function() {
+        this.$.login.fire('logout');
+      },
+      showLoginDialog: function() {
+        this.$.login.fire('show');
+      },
+      _logoutSuccess: function() {
+        this.authenticated = false;
+        this.$.toast.show({text: "You are logged out, the btn should be update correctly.", duration: 3000});
+      }
+    });
 
   </script>
 </dom-module>

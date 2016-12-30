@@ -32,7 +32,12 @@
       },
 
       listeners: {
-        'show': 'showDialog'
+        'show': 'showDialog',
+        'logout': 'doLogout'
+      },
+
+      ready: function() {
+        this.$.xhr.generateRequest();
       },
 
       showDialog: function() {
@@ -52,7 +57,7 @@
       },
 
       doLogout: function() {
-        this.$.xhr.headers["Authorization"] = "Basic " + btoa(":");
+        this.$.xhr.headers["Authorization"] = "Basic " + btoa("x:y");
         this.$.xhr.generateRequest();
       },
 
@@ -61,10 +66,8 @@
         this.$.loginDlg.close();
       },
 
-      notLoggedIn: function() {
+      notLoggedIn: function(alarm) {
         this.fire("authenticated", {authenticated: false});
-        this.$.error.innerHTML = "Can't login! Check your username or password."
-        this.$.error.hidden = false;
       }
     });
   </script>
