@@ -32,10 +32,11 @@
       <paper-toolbar>
         <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
         <span class="title">The Flies</span>
-        <a is="paper-button" href="/login" hidden$="{{authenticated}}">Login</a>
-        <!--<paper-button id="loginBtn" on-tap="showLoginDialog" hidden$="{{authenticated}}">Login
+        <paper-button id="loginBtn" on-tap="doLogin" hidden$="{{authenticated}}">Login
+        </paper-button>
+        <!--<paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
         </paper-button>-->
-        <paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
+        <paper-button id="logoutBtn" on-tap="doLogout">Logout
         </paper-button>
       </paper-toolbar>
 
@@ -92,6 +93,9 @@
       },
       doLogout: function() {
         this.$.login.fire('logout');
+      },
+      doLogin: function() {
+        window.location.replace("/login");
       },
       showLoginDialog: function() {
         this.$.login.fire('show');

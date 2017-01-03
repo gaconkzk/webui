@@ -7,8 +7,14 @@
   <template>
     <iron-ajax id="xhr"
                url="/user"
-               headers='{"X-Requested-With": "XMLHttpRequest", "Accept": "application/json"}'
+               headers='{"X-Requested-With": "XMLHttpRequest"}'
                on-response="loggedIn"
+               on-error="notLoggedIn"></iron-ajax>
+    <iron-ajax id="xhrlogout"
+               url="/logout"
+               method="POST"
+               headers='{"X-Requested-With": "XMLHttpRequest"}'
+               on-response="notLoggedIn"
                on-error="notLoggedIn"></iron-ajax>
     <paper-dialog id="loginDlg">
       <h2>Login</h2>
@@ -61,12 +67,20 @@
       },
 
       doLogout: function() {
+        /*
         // clear old value;
         this.username = "";
         this.password = "";
         // send fake request for logout
         this.$.xhr.headers["Authorization"] = "Basic " + btoa("x:y");
         this.$.xhr.generateRequest();
+        */
+
+        var csrf = this.getCSRFCookie();
+        if (csrf) {
+          this.$.xhrlogout.headers["X-XSRF-TOKEN"] = csrf;
+        }
+        this.$.xhrlogout.generateRequest();
       },
 
       loggedIn: function(evt) {
@@ -76,6 +90,11 @@
 
       notLoggedIn: function(alarm) {
         this.fire("authenticated", {authenticated: false, message: {text: "You are LoggedOut.", duration: 3000}});
+      },
+
+      getCSRFCookie: function() {
+        var b = document.cookie.match('(^|;)\\s*XSRF\\-TOKEN\\s*=\\s*([^;]+)');
+        return b ? b.pop() : '';
       }
     });
   </script>

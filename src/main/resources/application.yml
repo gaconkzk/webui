@@ -1,5 +1,9 @@
 debug: true
 
+spring:
+  aop:
+    proxy-target-class: true
+
 security:
   user.password: none
   ignored: /**/favicon.icon,/css/**,/resources/**,/images/**
@@ -20,10 +24,8 @@ zuul:
     user:
       path: /user/**
       url: http://localhost:9999/uaa/user
-    auth-server:
-      path: /uaa/**
-      stripPrefix: false
       sensitiveHeaders:
 
 logging.level:
   org.springframework.security: DEBUG
+  com.tma.dc4b: DEBUG
