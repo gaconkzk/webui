@@ -1,7 +1,8 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.0.BUILD-SNAPSHOT'
-        springCloudVersion = 'Dalston.BUILD-SNAPSHOT'
+        springBootVersion = '1.4.3.RELEASE'
+        springCloudVersion = 'Camden.SR3'
+        lombokVersion = '1.16.12'
     }
     repositories {
         mavenCentral()
@@ -64,7 +65,11 @@ dependencies {
 
     compile("org.springframework.cloud:spring-cloud-starter-zuul")
 
+    compile("org.springframework.cloud:spring-cloud-starter-security")
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
+
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
 }
 
 task npmCacheConfig(type: NpmTask) {
