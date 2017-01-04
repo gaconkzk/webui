@@ -258,3 +258,5 @@ In the <<_the_login_page_Polymer_js_and_spring_security_part_ii,next section in 
 ****
 Thanks: I would like to thank everyone who helped me develop this series, and in particular http://spring.io/team/rwinch[Rob Winch] and https://twitter.com/thspaeth[Thorsten Spaeth] for their careful reviews of the text and source code, and for teaching me a few tricks I didn't know even about the parts I thought I was most familar with.
 ****
+
+=== Very Important Note: We need the spring-cloud-starter-security for the automation passing authentication between services.
