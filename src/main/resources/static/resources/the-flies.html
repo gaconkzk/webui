@@ -34,9 +34,7 @@
         <span class="title">The Flies</span>
         <paper-button id="loginBtn" on-tap="doLogin" hidden$="{{authenticated}}">Login
         </paper-button>
-        <!--<paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
-        </paper-button>-->
-        <paper-button id="logoutBtn" on-tap="doLogout">Logout
+        <paper-button id="logoutBtn" on-tap="doLogout" hidden$="{{!authenticated}}">Logout
         </paper-button>
       </paper-toolbar>
 
@@ -96,9 +94,6 @@
       },
       doLogin: function() {
         window.location.replace("/login");
-      },
-      showLoginDialog: function() {
-        this.$.login.fire('show');
       }
     });
 
