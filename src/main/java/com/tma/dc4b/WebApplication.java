@@ -1,25 +1,18 @@
 package com.tma.dc4b;
 
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
-import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableZuulProxy
 @EnableOAuth2Sso
+@Slf4j
 public class WebApplication extends WebSecurityConfigurerAdapter {
 
   public static void main(String[] args) {
@@ -29,30 +22,15 @@ public class WebApplication extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-        .logout().disable()
+        .logout().clearAuthentication(false).addLogoutHandler((req, res, auth) -> {
+      //serverLogout(req,res);
+    }).logoutSuccessHandler((req, res, auth) -> {
+
+    }).and()
         .authorizeRequests()
         .antMatchers("/index.html", "/", "/login").permitAll()
         .anyRequest().authenticated().and()
         .csrf()
         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-  }
-
-  @Bean
-  public RestTemplate loadBalancedRestTemplate(RestTemplateCustomizer customizer) {
-    RestTemplate restTemplate = new RestTemplate();
-    customizer.customize(restTemplate);
-    return restTemplate;
-  }
-
-  @Autowired
-  @Qualifier("loadBalancedRestTemplate")
-  private RestTemplate keyUriRestTemplate;
-
-  private String getKeyFromAuthorizationServer() {
-    HttpEntity<Void> request = new HttpEntity<>(new HttpHeaders());
-    return (String) this.keyUriRestTemplate
-        .exchange("http://localhost:9999/oauth/token_key", HttpMethod.GET, request, Map.class)
-        .getBody()
-        .get("value");
   }
 }
