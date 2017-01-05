@@ -1,7 +1,8 @@
 package com.tma.dc4b;
 
 import java.util.Map;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
@@ -11,10 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,10 +29,7 @@ public class WebApplication extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-        .logout()
-          .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.ACCEPTED))
-          .deleteCookies("JSESSIONID")
-          .invalidateHttpSession(true).clearAuthentication(true).and()
+        .logout().disable()
         .authorizeRequests()
         .antMatchers("/index.html", "/", "/login").permitAll()
         .anyRequest().authenticated().and()
@@ -48,7 +44,8 @@ public class WebApplication extends WebSecurityConfigurerAdapter {
     return restTemplate;
   }
 
-  @Inject
+  @Autowired
+  @Qualifier("loadBalancedRestTemplate")
   private RestTemplate keyUriRestTemplate;
 
   private String getKeyFromAuthorizationServer() {

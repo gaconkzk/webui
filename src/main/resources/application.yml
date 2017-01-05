@@ -24,6 +24,9 @@ zuul:
     user:
       path: /user/**
       url: http://localhost:9999/uaa/user
+    logout:
+      path: /logout/**
+      url: http://localhost:9999/uaa/logout
 
 logging.level:
   org.springframework.security: DEBUG

@@ -15,7 +15,7 @@
                method="POST"
                headers='{"X-Requested-With": "XMLHttpRequest"}'
                on-response="notLoggedIn"
-               on-error="notLoggedIn"></iron-ajax>
+               on-error="stillLoggedIn"></iron-ajax>
     <paper-dialog id="loginDlg">
       <h2>Login</h2>
       <iron-label id="error" hidden="true"></iron-label>
@@ -90,6 +90,10 @@
 
       notLoggedIn: function(alarm) {
         this.fire("authenticated", {authenticated: false, message: {text: "You are LoggedOut.", duration: 3000}});
+      },
+
+      stillLoggedIn: function(alarm) {
+        this.fire("authenticated", {authenticated: true, message: {text: "You are still LoggedIn.", duration: 3000}});
       },
 
       getCSRFCookie: function() {
