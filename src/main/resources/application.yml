@@ -24,8 +24,8 @@ zuul:
     user:
       path: /user/**
       url: http://localhost:9999/uaa/user
-    logout:
-      path: /logout/**
+    logmeout:
+      path: /logmeout/**
       url: http://localhost:9999/uaa/logout
 
 logging.level:
