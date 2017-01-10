@@ -1,5 +1,6 @@
 package com.tma.dc4b;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -58,6 +61,14 @@ public class WebApplication extends WebSecurityConfigurerAdapter {
   private void serverLogout(HttpServletRequest req, HttpServletResponse res) {
     oAuth2RestOperations()
         .exchange("http://localhost:9999/uaa/logout", HttpMethod.POST, null, Void.class);
-    clientContext.getAccessToken();
+    clientContext.setAccessToken(null);
+  }
+
+  private String getKeyFromAuthorizationServer() {
+    HttpEntity<Void> request = new HttpEntity<>(new HttpHeaders());
+    return (String) this.oAuth2RestOperations()
+        .exchange("http://localhost:999/oauth/token", HttpMethod.POST, request, Map.class).getBody()
+        .get("value");
+
   }
 }
